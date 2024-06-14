@@ -1,0 +1,56 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block head_title %}Banking System{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-3 gap-4">
+    <div></div>
+    <div class="py-2 px-3 rounded-xl bg-white mt-12">
+        <h1 class="font-mono font-bold text-3xl text-center pb-5 shadow-md">Sign In</h1>
+        <hr>
+        {% if form.non_field_errors %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-2" role="alert">
+            <p class="font-bold">Error!</p>
+            <ul>
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        <div class="w-full mt-10">
+            <form method="post" class="shadow-md border border-gray-200 rounded px-8 pt-6 pb-8 mb-4" autocomplete="off" id="login-form">
+                {% csrf_token %}
+                {% for hidden_field in form.hidden_fields %}
+                    {{ hidden_field }}
+                {% endfor %}
+                {% for field in form.visible_fields %}
+                <div class="mb-4">
+                    <label for="{{ field.id_for_label }}" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }}</label>
+                    <input
+                        type="{{ field.field.widget.input_type }}"
+                        id="{{ field.id_for_label }}"
+                        name="{{ field.html_name }}_temp"
+                        class="shadow appearance-none border {% if field.errors %} border-red-500 {% else %} border-gray-500 {% endif %} rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+
+                        onfocus="this.setAttribute('autocomplete', '{{ field.html_name }}'); this.setAttribute('name', '{{ field.html_name }}');"
+                    >
+                    {% if field.errors %}
+                    <p class="text-red-600 text-sm italic">{{ field.errors }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                {% if form.non_field_errors and 'This email is not registered.' in form.non_field_errors %}
+                    <p class="text-center text-sm text-gray-600 mt-4">Don't have an account? <a href="{% url 'accounts:user_registration' %}" class="text-blue-600">Register now</a></p>
+                {% endif %}
+                <div class="flex items-center justify-center w-full">
+                    <button type="submit" class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Sign In
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
